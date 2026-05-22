@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cacilda & Adérito — Case Study · LUMINA by Lia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Paleta tirada directamente do minisite — verde oliva, creme, dourado */
+    --olive:       #3a4820;
+    --olive-mid:   #465830;
+    --olive-light: #607040;
+    --olive-pale:  #7a9055;
+    --sage:        #6f8a60;
+    --sage-light:  #96b082;
+    --sage-pale:   #c4d8b0;
+    --cream:       #f5f2eb;
+    --gold:        #a8882a;
+    --gold-mid:    rgba(168,136,42,0.35);
+    --gold-light:  #c4a040;
+    --gold-pale:   rgba(168,136,42,0.12);
+
+    /* UI escuro */
+    --black:       #08090C;
+    --black-2:     #0E100A;
+    --black-3:     #141810;
+    --black-4:     #1A1E14;
+    --white:       #FFFFFF;
+    --white-mid:   rgba(255,255,255,0.50);
+    --white-high:  rgba(255,255,255,0.88);
+
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans:  'Outfit', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* SCROLL PROGRESS */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(to right, var(--olive), var(--sage), var(--gold-light));
+    z-index: 9999; transition: width 0.1s linear;
+  }
+
+  /* CURSOR */
+  #cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--gold-light); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: width 0.25s, height 0.25s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold-mid); border-radius: 50%;
+    pointer-events: none; z-index: 9997;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  body.cursor-hover #cursor { width: 16px; height: 16px; }
+  body.cursor-hover #cursor-ring { width: 56px; height: 56px; border-color: var(--gold-light); }
+
+  /* GRAIN */
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03; pointer-events: none; z-index: 1000;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 2rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(8,9,12,0.94); backdrop-filter: blur(24px);
+    padding: 1.1rem 5vw; border-bottom-color: rgba(168,136,42,0.1);
+  }
+  .nav-logo { font-family: var(--serif); font-size: 1.55rem; font-weight: 300; letter-spacing: 0.38em; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--gold-light); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--white-mid); text-decoration: none; transition: color 0.3s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--gold-light); transition: width 0.3s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a.active { color: var(--white); }
+  .nav-cta { padding: 0.55rem 1.4rem; border: 1px solid rgba(168,136,42,0.35); color: var(--gold-light) !important; font-size: 0.72rem !important; letter-spacing: 0.2em !important; }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--gold-pale); border-color: var(--gold-light) !important; }
+  .nav-toggle { display: none; background: none; border: none; color: var(--white); font-size: 1.4rem; cursor: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes petalFloat {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    8%   { opacity: 0.7; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-90px) rotate(var(--spin)); opacity: 0; }
+  }
+  @keyframes softPulse { 0%,100%{opacity:0.06} 50%{opacity:0.12} }
+
+  .reveal {
+    opacity: 0; transform: translateY(38px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+
+  /* BUTTONS */
+  .btn-primary {
+    padding: 0.95rem 2.4rem; background: var(--olive-mid); color: var(--white);
+    border: 1px solid transparent; font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-block; position: relative; overflow: hidden;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%); }
+  .btn-primary:hover { background: var(--olive-light); box-shadow: 0 0 36px 8px rgba(58,72,32,0.45); transform: translateY(-2px); }
+  .btn-outline {
+    padding: 0.95rem 2.4rem; background: transparent; color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15); font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-block;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background 0.3s;
+  }
+  .btn-outline:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); background: var(--gold-pale); }
+
+  /* ══════════════════════════
+     HERO
+  ══════════════════════════ */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-rows: 1fr auto;
+    padding: 0 5vw;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-canvas {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 65% at 70% 30%, rgba(58,72,32,0.35) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 15% 70%, rgba(107,138,96,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 55% 90%, rgba(168,136,42,0.07) 0%, transparent 55%),
+      var(--black);
+  }
+
+  /* Organic leaf-vein grid */
+  .hero-texture {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(96,112,64,0.04) 0px, rgba(96,112,64,0.04) 1px, transparent 1px, transparent 88px),
+      repeating-linear-gradient(0deg, rgba(96,112,64,0.03) 0px, rgba(96,112,64,0.03) 1px, transparent 1px, transparent 130px);
+  }
+
+  /* Floating petals */
+  .hero-petals { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .h-petal { position: absolute; animation: petalFloat var(--dur) var(--delay) ease-in infinite; }
+
+  /* Decorative ampersand watermark */
+  .hero-letter {
+    position: absolute; right: 2vw; top: 50%; transform: translateY(-54%);
+    font-family: var(--serif); font-size: clamp(20rem, 34vw, 44rem);
+    font-weight: 300; font-style: italic; color: transparent;
+    -webkit-text-stroke: 1px rgba(96,112,64,0.12);
+    line-height: 1; pointer-events: none; user-select: none;
+    opacity: 0; animation: fadeUp 1.4s 0.2s ease forwards;
+  }
+
+  .hero-inner {
+    align-self: flex-end;
+    padding-top: 12rem; padding-bottom: 5rem;
+    position: relative; z-index: 2; max-width: 880px;
+  }
+
+  .hero-back {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--white-mid); text-decoration: none;
+    margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 0.8s 0.1s ease forwards;
+    transition: color 0.3s;
+  }
+  .hero-back:hover { color: var(--gold-light); }
+  .hero-back::before { content: '←'; font-size: 0.85rem; }
+
+  .hero-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--sage-light); opacity: 0;
+    animation: fadeUp 0.9s 0.25s ease forwards;
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.8rem;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: rgba(150,176,130,0.45); }
+
+  .hero-inner h1 {
+    font-family: var(--serif); font-size: clamp(3.2rem, 7.5vw, 7.8rem);
+    font-weight: 300; line-height: 1; letter-spacing: -0.01em;
+    opacity: 0; animation: fadeUp 1s 0.4s ease forwards;
+  }
+  .hero-inner h1 em { font-style: italic; color: var(--sage-light); }
+  .hero-inner h1 .ampersand { color: var(--gold-light); font-style: italic; }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: clamp(0.85rem, 1.5vw, 1.05rem); color: var(--white-mid);
+    font-weight: 300; letter-spacing: 0.04em; max-width: 520px;
+    opacity: 0; animation: fadeUp 1s 0.55s ease forwards;
+  }
+
+  /* Meta bar */
+  .hero-meta-bar {
+    position: relative; z-index: 2;
+    display: flex; align-items: stretch;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    opacity: 0; animation: fadeUp 0.9s 0.7s ease forwards;
+  }
+  .hero-meta-item { flex: 1; padding: 1.6rem 0; border-right: 1px solid rgba(255,255,255,0.06); }
+  .hero-meta-item:last-child { border-right: none; padding-left: 2rem; }
+  .hero-meta-item:first-child { padding-left: 0; }
+  .hero-meta-item + .hero-meta-item { padding-left: 2rem; }
+  .meta-label { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.28); display: block; margin-bottom: 0.35rem; }
+  .meta-value { font-size: 0.88rem; color: var(--white-high); }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; right: 5vw; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    animation: fadeUp 1s 1.2s ease forwards; opacity: 0;
+  }
+  .scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent); }
+
+  /* ══════════════════════════
+     SECTION LABEL
+  ══════════════════════════ */
+  .section-label { font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--gold-light); display: block; margin-bottom: 1.5rem; opacity: 0.8; }
+
+  /* ══════════════════════════
+     OVERVIEW
+  ══════════════════════════ */
+  #overview {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .overview-left { background: var(--black-2); padding: 6rem 5vw; }
+  .overview-right { background: var(--black-3); padding: 6rem 5vw; position: relative; overflow: hidden; }
+  .overview-right::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(58,72,32,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .overview-left p { font-size: 1.05rem; line-height: 1.9; color: var(--white-mid); max-width: 520px; margin-bottom: 1.2rem; }
+  .overview-left p strong { color: var(--white-high); font-weight: 400; }
+
+  /* Feature list */
+  .feature-list { display: flex; flex-direction: column; gap: 0; }
+  .feature-item {
+    display: flex; align-items: flex-start; gap: 1.2rem;
+    padding: 1.3rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .feature-item:last-child { border-bottom: none; }
+  .feature-num {
+    font-family: var(--serif); font-size: 1.8rem; font-weight: 300;
+    color: var(--sage); opacity: 0.35; line-height: 1;
+    flex-shrink: 0; width: 2.5rem; text-align: right;
+    transition: opacity 0.3s;
+  }
+  .feature-item:hover .feature-num { opacity: 0.85; }
+  .feature-text strong { display: block; font-size: 0.9rem; color: var(--white-high); font-weight: 400; margin-bottom: 0.2rem; }
+  .feature-text span { font-size: 0.82rem; color: var(--white-mid); line-height: 1.6; }
+
+  /* ══════════════════════════
+     CHALLENGE
+  ══════════════════════════ */
+  #challenge {
+    padding: 8rem 5vw;
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: start;
+  }
+  .challenge-left { position: sticky; top: 8rem; }
+  .challenge-left h2 { font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem); font-weight: 300; line-height: 1.15; }
+  .challenge-left h2 em { font-style: italic; color: var(--sage-light); }
+  .challenge-right p { font-size: 0.97rem; color: var(--white-mid); line-height: 1.95; margin-bottom: 1.5rem; }
+  .challenge-right p strong { color: var(--white-high); font-weight: 400; }
+  .challenge-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+  .challenge-list li {
+    display: flex; align-items: flex-start; gap: 1rem;
+    font-size: 0.9rem; color: var(--white-mid); line-height: 1.6;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(107,138,96,0.3);
+    transition: border-left-color 0.3s, background 0.3s;
+  }
+  .challenge-list li:hover { border-left-color: var(--sage-light); background: rgba(58,72,32,0.06); }
+  .challenge-list li::before { content: '✦'; color: var(--sage-light); font-size: 0.4rem; flex-shrink: 0; margin-top: 0.45rem; }
+
+  /* ══════════════════════════
+     CONCEPT
+  ══════════════════════════ */
+  #concept {
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    overflow: hidden; position: relative;
+  }
+  .concept-glow {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 55% 70% at 25% 50%, rgba(58,72,32,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 55% at 80% 50%, rgba(168,136,42,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .concept-inner {
+    max-width: 1300px; margin: 0 auto; padding: 8rem 5vw;
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 6rem; align-items: center;
+  }
+  .concept-text h2 { font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem); font-weight: 300; line-height: 1.15; margin-bottom: 2rem; }
+  .concept-text h2 em { font-style: italic; color: var(--sage-light); }
+  .concept-text p { font-size: 0.97rem; color: var(--white-mid); line-height: 1.95; margin-bottom: 1.2rem; }
+  .concept-text p strong { color: var(--white-high); font-weight: 400; }
+
+  /* Values 2x2 */
+  .concept-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); margin-top: 2.5rem; }
+  .concept-value { background: var(--black-3); padding: 1.3rem; text-align: center; }
+  .concept-value strong { font-family: var(--serif); font-size: 1.05rem; font-weight: 300; display: block; margin-bottom: 0.2rem; }
+  .concept-value span { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white-mid); }
+  .cv-1 strong { color: var(--sage-light); }
+  .cv-2 strong { color: var(--gold-light); }
+  .cv-3 strong { color: var(--sage-pale); }
+  .cv-4 strong { color: rgba(255,255,255,0.55); }
+
+  /* Invite preview card — styled after the actual minisite */
+  .invite-card {
+    background: linear-gradient(155deg, #101a08 0%, #141f0a 55%, #0f1807 100%);
+    border: 1px solid rgba(107,138,96,0.2);
+    padding: 3rem 2.5rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(107,138,96,0.06);
+  }
+  .invite-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, var(--olive), var(--sage), var(--gold-light));
+  }
+  /* Organic bg blobs */
+  .inv-blob {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    animation: softPulse 6s ease-in-out infinite;
+  }
+  .blob-1 { width: 200px; height: 200px; top: -60px; right: -40px; background: radial-gradient(circle, rgba(96,112,64,0.14), transparent 70%); }
+  .blob-2 { width: 160px; height: 160px; bottom: -40px; left: -40px; background: radial-gradient(circle, rgba(168,136,42,0.08), transparent 70%); animation-delay: -3s; }
+
+  .inv-pretitle { font-size: 0.5rem; letter-spacing: 0.52em; text-transform: uppercase; color: rgba(150,176,130,0.7); display: block; text-align: center; margin-bottom: 1.4rem; position: relative; }
+  .inv-names {
+    font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 300; font-style: italic; color: var(--cream);
+    text-align: center; line-height: 1.2; display: block; margin-bottom: 0.4rem; position: relative;
+  }
+  .inv-names .amp { color: var(--gold-light); }
+  .inv-divider { height: 1px; background: linear-gradient(to right, transparent, rgba(168,136,42,0.35), transparent); margin: 1.2rem 0; }
+  .inv-type { font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(196,192,176,0.5); display: block; text-align: center; margin-bottom: 1.4rem; }
+
+  .inv-details { display: flex; flex-direction: column; gap: 0.7rem; }
+  .inv-detail-row { display: flex; align-items: center; gap: 0.9rem; }
+  .inv-icon { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.6; }
+  .inv-detail-text { font-size: 0.76rem; color: var(--white-mid); }
+  .inv-detail-text strong { color: rgba(196,216,176,0.85); font-weight: 400; display: block; font-size: 0.8rem; }
+
+  .inv-divider-2 { height: 1px; background: linear-gradient(to right, transparent, rgba(107,138,96,0.2), transparent); margin: 1.3rem 0; }
+  .inv-envelope-hint { text-align: center; }
+  .inv-env-text { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.22); display: block; margin-bottom: 0.5rem; }
+  .inv-env-icon { display: block; margin: 0 auto; }
+
+  .preview-label { font-size: 0.55rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold-light); opacity: 0.65; text-align: center; display: block; margin-top: 1.4rem; }
+
+  /* ══════════════════════════
+     SOLUTION
+  ══════════════════════════ */
+  #solution { padding: 8rem 5vw; max-width: 1300px; margin: 0 auto; }
+  .solution-header { margin-bottom: 5rem; max-width: 600px; }
+  .solution-header h2 { font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem); font-weight: 300; line-height: 1.15; margin-bottom: 1.2rem; }
+  .solution-header h2 em { font-style: italic; color: var(--sage-light); }
+  .solution-header p { font-size: 0.97rem; color: var(--white-mid); line-height: 1.9; }
+
+  .sub-title { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-light); opacity: 0.75; margin-bottom: 1.5rem; display: block; }
+
+  /* Palette */
+  .palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: rgba(255,255,255,0.04); margin-bottom: 5rem; }
+  .swatch { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0.8rem; }
+  .swatch-label { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; line-height: 1.3; }
+  .swatch-hex { font-family: var(--serif); font-size: 0.9rem; display: block; }
+
+  /* Features grid */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; background: rgba(255,255,255,0.04); }
+  .feature-card {
+    background: var(--black-3); padding: 2.5rem 2rem;
+    border-top: 2px solid transparent;
+    transition: border-top-color 0.3s, background 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ''; position: absolute; top: -50px; right: -50px;
+    width: 160px; height: 160px; border-radius: 50%; opacity: 0.35; transition: opacity 0.4s;
+  }
+  .feature-card:hover::before { opacity: 0.85; }
+  .fc-1::before { background: radial-gradient(circle, rgba(58,72,32,0.3), transparent 70%); } .fc-1:hover { border-top-color: var(--olive-light); }
+  .fc-2::before { background: radial-gradient(circle, rgba(107,138,96,0.25), transparent 70%); } .fc-2:hover { border-top-color: var(--sage); }
+  .fc-3::before { background: radial-gradient(circle, rgba(150,176,130,0.2), transparent 70%); } .fc-3:hover { border-top-color: var(--sage-light); }
+  .fc-4::before { background: radial-gradient(circle, rgba(196,160,64,0.18), transparent 70%); } .fc-4:hover { border-top-color: var(--gold-light); }
+  .fc-5::before { background: radial-gradient(circle, rgba(216,192,128,0.15), transparent 70%); } .fc-5:hover { border-top-color: var(--gold-pale); }
+  .fc-6::before { background: radial-gradient(circle, rgba(58,72,32,0.2), transparent 70%); } .fc-6:hover { border-top-color: var(--olive-pale); }
+
+  .fcard-icon { display: block; margin-bottom: 1.2rem; position: relative; }
+  .fcard-name { font-family: var(--serif); font-size: 1.25rem; font-weight: 300; display: block; margin-bottom: 0.4rem; position: relative; }
+  .fcard-desc { font-size: 0.8rem; color: var(--white-mid); line-height: 1.7; position: relative; }
+
+  /* ══════════════════════════
+     MINISITE LINK
+  ══════════════════════════ */
+  #minisite-link {
+    margin: 0 5vw 2rem;
+    background: var(--black-3);
+    border: 1px solid rgba(107,138,96,0.14);
+    position: relative; overflow: hidden;
+  }
+  .minisite-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 70% at 80% 50%, rgba(58,72,32,0.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .minisite-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 3.5rem 4rem; gap: 3rem; flex-wrap: wrap;
+    position: relative; z-index: 2;
+  }
+  .minisite-text .label { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--sage-light); opacity: 0.8; display: block; margin-bottom: 0.6rem; }
+  .minisite-text h3 { font-family: var(--serif); font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 300; }
+  .minisite-text p { font-size: 0.85rem; color: var(--white-mid); margin-top: 0.5rem; }
+  .minisite-url { font-family: var(--serif); font-size: clamp(1rem, 1.5vw, 1.3rem); font-style: italic; color: var(--sage-light); opacity: 0.5; flex-shrink: 0; }
+  .btn-site {
+    padding: 0.95rem 2.4rem; background: transparent; color: var(--sage-pale);
+    border: 1px solid rgba(150,176,130,0.3); font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-flex; align-items: center; gap: 0.6rem;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background 0.3s;
+  }
+  .btn-site:hover { border-color: var(--sage-light); background: rgba(107,138,96,0.08); transform: translateY(-2px); }
+  .btn-site .arrow { display: inline-block; transition: transform 0.3s; }
+  .btn-site:hover .arrow { transform: translate(3px,-3px); }
+
+  /* ══════════════════════════
+     RESULTS
+  ══════════════════════════ */
+  #results { padding: 8rem 5vw; max-width: 1300px; margin: 0 auto; }
+  .results-header { margin-bottom: 5rem; text-align: center; }
+  .results-header h2 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; line-height: 1.2; }
+  .results-header h2 em { font-style: italic; color: var(--sage-light); }
+  .results-header p { font-size: 0.95rem; color: var(--white-mid); margin-top: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+
+  .results-cards {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: rgba(255,255,255,0.04); margin-bottom: 4rem;
+  }
+  .result-card { background: var(--black-3); padding: 2.5rem 1.5rem; text-align: center; }
+  .result-val { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 300; display: block; line-height: 1; margin-bottom: 0.5rem; }
+  .result-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white-mid); }
+
+  .results-qual { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .result-qual-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.5rem 1.8rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(107,138,96,0.3);
+    transition: border-left-color 0.3s;
+  }
+  .result-qual-item:hover { border-left-color: var(--sage-light); }
+  .result-qual-item::before { content: '✦'; color: var(--sage-light); font-size: 0.55rem; flex-shrink: 0; margin-top: 0.3rem; }
+  .result-qual-item p { font-size: 0.88rem; color: var(--white-mid); line-height: 1.65; }
+
+  /* ══════════════════════════
+     CONCLUSION
+  ══════════════════════════ */
+  #conclusion {
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding: 10rem 5vw;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .conclusion-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(58,72,32,0.14) 0%, rgba(168,136,42,0.04) 55%, transparent 70%);
+    pointer-events: none;
+  }
+  .conclusion-inner { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
+  .quote-mark { font-family: var(--serif); font-size: 6rem; line-height: 0.5; color: var(--sage); display: block; margin-bottom: 2rem; opacity: 0.35; }
+  blockquote { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 300; font-style: italic; line-height: 1.45; color: var(--white-high); margin-bottom: 2rem; }
+  blockquote em { color: var(--sage-light); }
+  .quote-attr { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white-mid); }
+
+  /* ══════════════════════════
+     CTA
+  ══════════════════════════ */
+  #cta {
+    padding: 10rem 5vw;
+    text-align: center; position: relative; overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .cta-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(58,72,32,0.2) 0%, transparent 70%); }
+  .cta-border { position: absolute; inset: 3rem 5vw; border: 1px solid rgba(168,136,42,0.07); pointer-events: none; }
+  .cta-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+  .cta-label { font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--gold-light); opacity: 0.8; display: block; margin-bottom: 1.5rem; }
+  .cta-inner h2 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+  .cta-inner h2 em { font-style: italic; color: var(--gold-light); }
+  .cta-inner p { color: var(--white-mid); font-size: 0.97rem; line-height: 1.8; max-width: 420px; margin: 0 auto 2.5rem; }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer { padding: 4rem 5vw 2.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: var(--serif); font-size: 1.2rem; font-weight: 300; letter-spacing: 0.38em; color: var(--white); text-decoration: none; }
+  .footer-logo span { color: var(--gold-light); }
+  .footer-copy { font-size: 0.7rem; color: rgba(255,255,255,0.22); }
+  .footer-social { display: flex; gap: 0.8rem; }
+  .footer-social-link { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--white-mid); font-size: 0.7rem; transition: border-color 0.3s, color 0.3s; }
+  .footer-social-link:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    #overview { grid-template-columns: 1fr; }
+    #challenge { grid-template-columns: 1fr; gap: 3rem; }
+    .challenge-left { position: static; }
+    .concept-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .results-cards { grid-template-columns: repeat(2, 1fr); }
+    .results-qual { grid-template-columns: 1fr; }
+    .palette { grid-template-columns: repeat(3, 1fr); }
+    .minisite-inner { flex-direction: column; gap: 2rem; }
+    nav .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-links.active { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8,9,12,0.97); backdrop-filter: blur(24px); padding: 2rem 5vw; gap: 1.5rem; border-bottom: 1px solid rgba(168,136,42,0.1); }
+    .hero-letter { display: none; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .results-cards { grid-template-columns: 1fr 1fr; }
+    .palette { grid-template-columns: repeat(2, 1fr); }
+    .hero-meta-bar { flex-wrap: wrap; }
+    .hero-meta-item { min-width: 50%; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo"><span>L</span>UMINA</a>
+  <button class="nav-toggle" id="navToggle">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="sobre.html">Estúdio</a></li>
+    <li><a href="servicos.html">Serviços</a></li>
+    <li><a href="case-studies.html" class="active">Case Studies</a></li>
+    <li><a href="servicos.html#precos">Investimento</a></li>
+    <li><a href="contacto.html" class="nav-cta">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-canvas"></div>
+  <div class="hero-texture"></div>
+  <div class="hero-petals" id="heroPetals" aria-hidden="true"></div>
+  <span class="hero-letter" aria-hidden="true">&</span>
+
+  <div class="hero-inner">
+    <a href="case-studies.html" class="hero-back">Case Studies</a>
+    <span class="hero-eyebrow">Convite Digital · Minisite · RSVP</span>
+    <h1>Cacilda <span class="ampersand">&</span><br><em>Adérito</em></h1>
+    <p class="hero-subtitle">Um minisite de casamento onde cada detalhe foi pensado para transportar os convidados para o universo do casal — antes mesmo de chegarem ao altar.</p>
+  </div>
+
+  <div class="hero-meta-bar">
+    <div class="hero-meta-item">
+      <span class="meta-label">Projecto</span>
+      <span class="meta-value">Minisite · Convite Interactivo</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Data</span>
+      <span class="meta-value">23 de Julho · 2026</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Tipo</span>
+      <span class="meta-value">UI Design · Motion · RSVP</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Local</span>
+      <span class="meta-value">Luanda · Angola</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ═══ OVERVIEW ═══ -->
+<section id="overview">
+  <div class="overview-left reveal">
+    <span class="section-label">Visão Geral</span>
+    <p>A <strong>Cacilda & Adérito</strong> queriam mais do que um convite — queriam uma experiência que representasse quem são e a beleza do momento que estavam prestes a viver.</p>
+    <p>O resultado foi um <strong>minisite completo de casamento</strong>: com envelope interactivo, conto regressivo, galeria, mapa e RSVP integrado — tudo num universo visual coeso de verde oliva, creme e dourado.</p>
+    <p>Um convite que os convidados <strong>não queriam fechar</strong>.</p>
+  </div>
+  <div class="overview-right reveal reveal-delay-2">
+    <span class="section-label">O que foi criado</span>
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="feature-num">01</span>
+        <div class="feature-text">
+          <strong>Envelope interactivo</strong>
+          <span>Animação de abertura com dois painéis — entrada cinematográfica</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-num">02</span>
+        <div class="feature-text">
+          <strong>Conto regressivo ao vivo</strong>
+          <span>Dias, horas, minutos e segundos até ao grande dia</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-num">03</span>
+        <div class="feature-text">
+          <strong>Música ambiente</strong>
+          <span>Trilha sonora de fundo para mergulhar na atmosfera</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-num">04</span>
+        <div class="feature-text">
+          <strong>RSVP com Google Sheets</strong>
+          <span>Confirmação de presença directa para folha de cálculo</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-num">05</span>
+        <div class="feature-text">
+          <strong>Pétalas animadas</strong>
+          <span>Chuva de pétalas florestais ao longo de toda a experiência</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHALLENGE ═══ -->
+<section id="challenge">
+  <div class="challenge-left reveal">
+    <span class="section-label">O Desafio</span>
+    <h2>Um casamento<br>angolano com<br><em>alma própria.</em></h2>
+  </div>
+  <div class="challenge-right reveal reveal-delay-1">
+    <p>O desafio foi criar algo que fosse simultaneamente <strong>elegante e quente</strong> — que comunicasse sofisticação sem perder a intimidade e o calor que define um casamento angolano.</p>
+    <p>Era necessário um universo visual que unisse os dois — a seriedade do momento com a alegria da celebração — numa experiência que funcionasse perfeitamente no telemóvel, de ponta a ponta.</p>
+    <ul class="challenge-list">
+      <li>Criar uma abertura de impacto que preparasse emocionalmente o convidado</li>
+      <li>Equilibrar elegância botânica com calor e identidade angolana</li>
+      <li>Integrar RSVP funcional sem quebrar a experiência estética</li>
+      <li>Garantir fluidez total em telemóvel — onde todos os convidados abririam</li>
+      <li>Construir uma narrativa visual coesa do início ao fim da página</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ CONCEPT ═══ -->
+<section id="concept">
+  <div class="concept-glow"></div>
+  <div class="concept-inner">
+    <div class="concept-text reveal">
+      <span class="section-label">O Conceito</span>
+      <h2>Floresta, creme<br>e <em>luz dourada.</em></h2>
+      <p>A direcção criativa nasce de um imaginário <strong>botânico e orgânico</strong> — verde floresta, fundos creme, detalhes a dourado. Uma estética que evoca natureza, presença e intimidade.</p>
+      <p>O envelope interactivo não é apenas uma entrada — é um <strong>gesto de abertura</strong>. Ao clicar, o convidado abre literalmente as portas para o mundo do casal.</p>
+      <div class="concept-values">
+        <div class="concept-value cv-1"><strong>Natureza</strong><span>Estética botânica</span></div>
+        <div class="concept-value cv-2"><strong>Dourado</strong><span>Acento de celebração</span></div>
+        <div class="concept-value cv-3"><strong>Creme</strong><span>Leveza &amp; calor</span></div>
+        <div class="concept-value cv-4"><strong>Intimidade</strong><span>Tom emocional</span></div>
+      </div>
+    </div>
+
+    <!-- Invite card preview -->
+    <div class="reveal reveal-delay-2">
+      <div class="invite-card">
+        <div class="inv-blob blob-1"></div>
+        <div class="inv-blob blob-2"></div>
+
+        <span class="inv-pretitle">LUMINA · Minisite de Casamento</span>
+        <span class="inv-names">Cacilda <span class="amp">&</span> Adérito</span>
+        <div class="inv-divider"></div>
+        <span class="inv-type">Convidam-vos a celebrar o seu casamento</span>
+
+        <div class="inv-details">
+          <div class="inv-detail-row">
+            <svg class="inv-icon" viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="3" width="16" height="14" rx="2" stroke="#96b082" stroke-width="1.1"/>
+              <line x1="2" y1="8" x2="18" y2="8" stroke="#96b082" stroke-width="0.9" opacity="0.5"/>
+              <line x1="7" y1="1.5" x2="7" y2="5" stroke="#96b082" stroke-width="1.1" stroke-linecap="round"/>
+              <line x1="13" y1="1.5" x2="13" y2="5" stroke="#96b082" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+            <div class="inv-detail-text">
+              <strong>23 de Julho de 2026</strong>
+              Quinta-feira
+            </div>
+          </div>
+          <div class="inv-detail-row">
+            <svg class="inv-icon" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7" stroke="#96b082" stroke-width="1.1"/>
+              <line x1="10" y1="5.5" x2="10" y2="10" stroke="#96b082" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="10" y1="10" x2="13" y2="12.5" stroke="#96b082" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <div class="inv-detail-text">
+              <strong>10:00</strong>
+              Cerimónia
+            </div>
+          </div>
+          <div class="inv-detail-row">
+            <svg class="inv-icon" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2C7 2 4.5 4.5 4.5 7.5C4.5 11.5 10 18 10 18C10 18 15.5 11.5 15.5 7.5C15.5 4.5 13 2 10 2Z" stroke="#96b082" stroke-width="1.1"/>
+              <circle cx="10" cy="7.5" r="2" stroke="#96b082" stroke-width="0.9"/>
+            </svg>
+            <div class="inv-detail-text">
+              <strong>Luanda, Angola</strong>
+              Local a confirmar
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-divider-2"></div>
+        <div class="inv-envelope-hint">
+          <span class="inv-env-text">Clique para abrir o convite</span>
+          <svg class="inv-env-icon" width="28" height="20" viewBox="0 0 28 20" fill="none">
+            <rect x="1" y="1" width="26" height="18" rx="2" stroke="#96b082" stroke-width="1"/>
+            <polyline points="1,1 14,11 27,1" stroke="#96b082" stroke-width="0.9" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <span class="preview-label">Pré-visualização · Minisite Cacilda & Adérito</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOLUTION ═══ -->
+<section id="solution">
+  <div class="solution-header reveal">
+    <span class="section-label">Direcção Visual & Funcionalidades</span>
+    <h2>Uma experiência<br><em>completa do início ao fim.</em></h2>
+    <p>Cada detalhe técnico foi pensado para não quebrar a experiência emocional — desde o envelope até ao botão de confirmação de presença.</p>
+  </div>
+
+  <!-- Palette -->
+  <div class="reveal">
+    <span class="sub-title">Paleta de Cores</span>
+    <div class="palette">
+      <div class="swatch" style="background:#3a4820;">
+        <span class="swatch-label" style="color:rgba(255,255,255,0.65);">Verde Oliva</span>
+        <span class="swatch-hex" style="color:rgba(255,255,255,0.8);">#3A4820</span>
+      </div>
+      <div class="swatch" style="background:#607040;">
+        <span class="swatch-label" style="color:rgba(255,255,255,0.7);">Oliva Claro</span>
+        <span class="swatch-hex" style="color:rgba(255,255,255,0.82);">#607040</span>
+      </div>
+      <div class="swatch" style="background:#96b082;">
+        <span class="swatch-label" style="color:rgba(0,0,0,0.5);">Sage Suave</span>
+        <span class="swatch-hex" style="color:rgba(0,0,0,0.6);">#96B082</span>
+      </div>
+      <div class="swatch" style="background:#f5f2eb;">
+        <span class="swatch-label" style="color:rgba(0,0,0,0.45);">Creme</span>
+        <span class="swatch-hex" style="color:rgba(0,0,0,0.55);">#F5F2EB</span>
+      </div>
+      <div class="swatch" style="background:#a8882a;">
+        <span class="swatch-label" style="color:rgba(0,0,0,0.5);">Dourado</span>
+        <span class="swatch-hex" style="color:rgba(0,0,0,0.6);">#A8882A</span>
+      </div>
+      <div class="swatch" style="background:#c4d8b0;">
+        <span class="swatch-label" style="color:rgba(0,0,0,0.45);">Sage Pálido</span>
+        <span class="swatch-hex" style="color:rgba(0,0,0,0.55);">#C4D8B0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features grid -->
+  <div class="reveal reveal-delay-1">
+    <span class="sub-title">Funcionalidades da Experiência</span>
+    <div class="features-grid">
+      <div class="feature-card fc-1">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="3" y="8" width="26" height="18" rx="2" stroke="#607040" stroke-width="1.2"/>
+          <path d="M3,8 L16,18 L29,8" stroke="#607040" stroke-width="1" fill="none" opacity="0.7"/>
+          <path d="M3,18 L10,13 M29,18 L22,13" stroke="#a8882a" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+        </svg>
+        <span class="fcard-name">Envelope Interactivo</span>
+        <span class="fcard-desc">Dois painéis que se abrem lateralmente com animação 3D — primeira impressão impossível de ignorar.</span>
+      </div>
+      <div class="feature-card fc-2">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="11" stroke="#6f8a60" stroke-width="1.2"/>
+          <line x1="16" y1="8" x2="16" y2="16" stroke="#6f8a60" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="16" y1="16" x2="21" y2="20" stroke="#a8882a" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="1.5" fill="#6f8a60"/>
+        </svg>
+        <span class="fcard-name">Conto Regressivo</span>
+        <span class="fcard-desc">Dias, horas, minutos e segundos a contar em tempo real até ao dia 23 de Julho.</span>
+      </div>
+      <div class="feature-card fc-3">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M8 8 C8 4, 14 2, 16 6 C18 2, 24 4, 24 8 C24 14, 16 22, 16 22 C16 22, 8 14, 8 8Z" stroke="#96b082" stroke-width="1.2" fill="none"/>
+          <path d="M12 12 C13 10, 15 10, 16 12" stroke="#a8882a" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        <span class="fcard-name">Música de Fundo</span>
+        <span class="fcard-desc">Trilha sonora ambiente controlada pelo convidado — mergulha na emoção do momento.</span>
+      </div>
+      <div class="feature-card fc-4">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="5" y="8" width="22" height="16" rx="2" stroke="#c4a040" stroke-width="1.2"/>
+          <line x1="5" y1="14" x2="27" y2="14" stroke="#c4a040" stroke-width="0.8" opacity="0.4"/>
+          <rect x="8" y="17" width="7" height="1" rx="0.5" fill="#c4a040" opacity="0.5"/>
+          <rect x="17" y="17" width="7" height="1" rx="0.5" fill="#c4a040" opacity="0.3"/>
+          <rect x="8" y="20" width="5" height="1" rx="0.5" fill="#c4a040" opacity="0.25"/>
+          <circle cx="24" cy="22" r="2.5" stroke="#96b082" stroke-width="0.8"/>
+          <line x1="22.5" y1="22" x2="25.5" y2="22" stroke="#96b082" stroke-width="0.8"/>
+          <line x1="24" y1="20.5" x2="24" y2="23.5" stroke="#96b082" stroke-width="0.8"/>
+        </svg>
+        <span class="fcard-name">RSVP com Google Sheets</span>
+        <span class="fcard-desc">Confirmação de presença directa — nome, acompanhantes e mensagem gravados em tempo real.</span>
+      </div>
+      <div class="feature-card fc-5">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <ellipse cx="16" cy="10" rx="4" ry="7" fill="rgba(240,180,200,0.4)" stroke="rgba(200,120,150,0.3)" stroke-width="0.8"/>
+          <ellipse cx="16" cy="10" rx="4" ry="7" fill="rgba(196,216,176,0.4)" stroke="rgba(100,140,70,0.25)" stroke-width="0.8" transform="rotate(72 16 16)"/>
+          <ellipse cx="16" cy="10" rx="4" ry="7" fill="rgba(255,220,180,0.35)" stroke="rgba(180,120,60,0.2)" stroke-width="0.8" transform="rotate(144 16 16)"/>
+          <ellipse cx="16" cy="10" rx="4" ry="7" fill="rgba(220,240,200,0.35)" stroke="rgba(80,130,60,0.2)" stroke-width="0.8" transform="rotate(216 16 16)"/>
+          <ellipse cx="16" cy="10" rx="4" ry="7" fill="rgba(245,200,220,0.4)" stroke="rgba(200,130,160,0.25)" stroke-width="0.8" transform="rotate(288 16 16)"/>
+          <circle cx="16" cy="16" r="3.5" fill="#d8c080" opacity="0.7"/>
+        </svg>
+        <span class="fcard-name">Pétalas Animadas</span>
+        <span class="fcard-desc">Chuva suave de pétalas florais que cai ao longo de toda a experiência — magia constante.</span>
+      </div>
+      <div class="feature-card fc-6">
+        <svg class="fcard-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="8" y="4" width="16" height="24" rx="3" stroke="#7a9055" stroke-width="1.2"/>
+          <circle cx="16" cy="25" r="1.5" fill="#7a9055" opacity="0.6"/>
+          <line x1="12" y1="8" x2="20" y2="8" stroke="#7a9055" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+          <rect x="11" y="11" width="10" height="7" rx="1" stroke="#a8882a" stroke-width="0.9" opacity="0.6"/>
+        </svg>
+        <span class="fcard-name">Mobile First</span>
+        <span class="fcard-desc">100% optimizado para telemóvel — cada animação, cada botão, cada transição desenhada para o ecrã pequeno.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MINISITE LINK ═══ -->
+<div id="minisite-link" class="reveal">
+  <div class="minisite-glow"></div>
+  <div class="minisite-inner">
+    <div class="minisite-text">
+      <span class="label">Minisite Desenvolvido pela LUMINA</span>
+      <h3>Explora o convite da Cacilda & Adérito</h3>
+      <p>A experiência completa está disponível online — abre e sente o resultado final.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1rem;">
+      <span class="minisite-url">cacilda-aderito.lumina.ao</span>
+      <a href="#" class="btn-site">
+        Ver o minisite <span class="arrow">↗</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<section id="results">
+  <div class="results-header reveal">
+    <span class="section-label" style="display:block;margin-bottom:1rem;">Resultado</span>
+    <h2>Um convite que se tornou<br>parte da <em>celebração.</em></h2>
+    <p>Os convidados chegaram ao casamento já imersos no universo da Cacilda & Adérito. O convite não anunciou a festa — foi a primeira festa.</p>
+  </div>
+  <div class="results-cards reveal reveal-delay-1">
+    <div class="result-card">
+      <span class="result-val" style="color:var(--sage-light);">5+</span>
+      <span class="result-label">Funcionalidades integradas</span>
+    </div>
+    <div class="result-card">
+      <span class="result-val" style="color:var(--gold-light);">1</span>
+      <span class="result-label">Minisite completo</span>
+    </div>
+    <div class="result-card">
+      <span class="result-val" style="color:var(--sage-pale);">100%</span>
+      <span class="result-label">Mobile optimizado</span>
+    </div>
+    <div class="result-card">
+      <span class="result-val" style="color:var(--sage-light);">✦</span>
+      <span class="result-label">RSVP automatizado</span>
+    </div>
+  </div>
+  <div class="results-qual reveal reveal-delay-2">
+    <div class="result-qual-item"><p>Experiência imersiva que os convidados partilharam espontaneamente antes do dia</p></div>
+    <div class="result-qual-item"><p>RSVP digital que eliminou completamente a gestão manual de confirmações</p></div>
+    <div class="result-qual-item"><p>Identidade visual coesa que representou o casal de forma autêntica e memorável</p></div>
+    <div class="result-qual-item"><p>Minisite que ficou como memória digital permanente do casamento</p></div>
+  </div>
+</section>
+
+<!-- ═══ CONCLUSION ═══ -->
+<section id="conclusion">
+  <div class="conclusion-glow"></div>
+  <div class="conclusion-inner reveal">
+    <span class="quote-mark" aria-hidden="true">"</span>
+    <blockquote>Um casamento começa muito antes<br>do altar — começa no momento em que<br>o convidado abre o <em>envelope.</em></blockquote>
+    <p class="quote-attr">Design que celebra antes mesmo da celebração começar.</p>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-border"></div>
+  <div class="cta-inner reveal">
+    <span class="cta-label">O próximo momento</span>
+    <h2>O teu casamento merece<br>um convite à <em>altura?</em></h2>
+    <p>Vamos criar uma experiência que os teus convidados nunca vão esquecer.</p>
+    <div class="cta-btns">
+      <a href="https://wa.me/244956263644" class="btn-primary" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@lumina.ao" class="btn-outline">hello@lumina.ao</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <a href="index.html" class="footer-logo"><span>L</span>UMINA</a>
+    <span class="footer-copy">© 2026 LUMINA by Lia · Luanda, Angola</span>
+    <div class="footer-social">
+      <a href="#" class="footer-social-link" title="Instagram">IG</a>
+      <a href="https://wa.me/244956263644" class="footer-social-link" title="WhatsApp">WA</a>
+      <a href="mailto:hello@lumina.ao" class="footer-social-link" title="Email">@</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Petals */
+  (function() {
+    const c = document.getElementById('heroPetals');
+    if (!c) return;
+    const svgs = [
+      (col) => `<svg width="14" height="20" viewBox="0 0 14 20" fill="none"><path d="M7 1C11 5 14 10 7 19C0 10 3 5 7 1Z" fill="${col}" opacity="0.7"/><path d="M7 1C7 1 7 19 7 19" stroke="white" stroke-width="0.5" opacity="0.15"/></svg>`,
+      (col) => `<svg width="18" height="14" viewBox="0 0 18 14" fill="none"><ellipse cx="9" cy="7" rx="8" ry="4.5" fill="${col}" opacity="0.65" transform="rotate(30 9 7)"/></svg>`,
+      (col) => `<svg width="10" height="16" viewBox="0 0 10 16" fill="none"><path d="M5 1C8 4 10 8 5 15C0 8 2 4 5 1Z" fill="${col}" opacity="0.72"/></svg>`,
+    ];
+    const colours = ['rgba(150,176,130,0.7)','rgba(196,216,176,0.6)','rgba(240,200,180,0.55)','rgba(255,220,200,0.5)','rgba(107,138,96,0.65)','rgba(168,136,42,0.4)'];
+    for (let i = 0; i < 25; i++) {
+      const wrap = document.createElement('div');
+      wrap.className = 'h-petal';
+      const col = colours[Math.floor(Math.random() * colours.length)];
+      const shape = svgs[Math.floor(Math.random() * svgs.length)];
+      const dur = 8 + Math.random() * 12;
+      const delay = -(Math.random() * 18);
+      const left = Math.random() * 100;
+      const bottom = 10 + Math.random() * 70;
+      const spin = (Math.random() - 0.5) * 540;
+      wrap.style.cssText = `left:${left}%;bottom:${bottom}%;--dur:${dur}s;--delay:${delay}s;--spin:${spin}deg;`;
+      wrap.innerHTML = shape(col);
+      c.appendChild(wrap);
+    }
+  })();
+
+  /* Cursor */
+  const cur=document.getElementById('cursor'), ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button,.feature-card,.result-qual-item,.challenge-list li,.feature-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+  });
+  if('ontouchstart' in window){cur.style.display='none';ring.style.display='none';document.body.style.cursor='auto';}
+
+  /* Scroll progress */
+  window.addEventListener('scroll',()=>{
+    const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+    document.getElementById('scroll-progress').style.width=(p*100)+'%';
+    document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
+  },{passive:true});
+
+  /* Mobile nav */
+  document.getElementById('navToggle').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('active'));
+  document.getElementById('navLinks').querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('active')));
+
+  /* Reveal */
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

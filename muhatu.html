@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Muhatu Enterprise — Case Study · LUMINA by Lia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #5A0F7A;
+    --purple-light: #7B2FA0;
+    --purple-glow: rgba(90,15,122,0.4);
+    --purple-glow-strong: rgba(90,15,122,0.65);
+    --purple-soft: #9B6AB5;
+    --lilac: #C9A8E0;
+    --lilac-dim: rgba(201,168,224,0.08);
+    --black: #0A0A0A;
+    --black-2: #111111;
+    --black-3: #171717;
+    --black-4: #1e1e1e;
+    --white: #FFFFFF;
+    --white-dim: rgba(255,255,255,0.06);
+    --white-mid: rgba(255,255,255,0.52);
+    --white-high: rgba(255,255,255,0.88);
+    --gold: #D4AF37;
+    --gold-dim: rgba(212,175,55,0.10);
+    --gold-light: #E8CC6A;
+    --gold-mid: rgba(212,175,55,0.32);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Outfit', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* SCROLL PROGRESS */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(to right, var(--purple), var(--lilac), var(--gold));
+    z-index: 9999; transition: width 0.1s linear;
+  }
+
+  /* CURSOR */
+  #cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: width 0.25s, height 0.25s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold-mid); border-radius: 50%;
+    pointer-events: none; z-index: 9997;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s;
+  }
+  body.cursor-hover #cursor { width: 16px; height: 16px; }
+  body.cursor-hover #cursor-ring { width: 56px; height: 56px; border-color: var(--gold); }
+
+  /* GRAIN */
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028; pointer-events: none; z-index: 1000;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 2rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.92); backdrop-filter: blur(24px);
+    padding: 1.1rem 5vw; border-bottom-color: rgba(212,175,55,0.08);
+  }
+  .nav-logo {
+    font-family: var(--serif); font-size: 1.55rem; font-weight: 300;
+    letter-spacing: 0.38em; color: var(--white); text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--white-mid); text-decoration: none; transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px; background: var(--gold); transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a.active { color: var(--white); }
+  .nav-cta {
+    padding: 0.55rem 1.4rem; border: 1px solid rgba(212,175,55,0.35);
+    color: var(--gold) !important; font-size: 0.72rem !important; letter-spacing: 0.2em !important;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--gold-dim); border-color: var(--gold) !important; }
+  .nav-toggle { display: none; background: none; border: none; color: var(--white); font-size: 1.4rem; cursor: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  .reveal {
+    opacity: 0; transform: translateY(38px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+
+  /* BUTTONS */
+  .btn-primary {
+    padding: 0.95rem 2.4rem; background: var(--purple); color: var(--white);
+    border: 1px solid transparent; font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-block; position: relative; overflow: hidden;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%); }
+  .btn-primary:hover { background: var(--purple-light); box-shadow: 0 0 36px 8px var(--purple-glow-strong); transform: translateY(-2px); }
+  .btn-outline {
+    padding: 0.95rem 2.4rem; background: transparent; color: var(--white);
+    border: 1px solid rgba(255,255,255,0.2); font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-block;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background 0.3s;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); background: var(--gold-dim); }
+  .btn-site {
+    padding: 0.95rem 2.4rem; background: transparent; color: var(--lilac);
+    border: 1px solid rgba(201,168,224,0.3); font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-flex; align-items: center; gap: 0.6rem;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background 0.3s;
+  }
+  .btn-site:hover { border-color: var(--lilac); background: var(--lilac-dim); transform: translateY(-2px); }
+  .btn-site .arrow { display: inline-block; transition: transform 0.3s; }
+  .btn-site:hover .arrow { transform: translate(3px, -3px); }
+
+  /* ══════════════════════════════════
+     HERO
+  ══════════════════════════════════ */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-rows: 1fr auto;
+    padding: 0 5vw;
+    position: relative; overflow: hidden;
+  }
+
+  /* Background gradient — brand colours */
+  .hero-canvas {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 70% at 70% 30%, rgba(90,15,122,0.28) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(201,168,224,0.07) 0%, transparent 60%),
+      var(--black);
+  }
+
+  /* Decorative M letterform watermark */
+  .hero-letter {
+    position: absolute; right: 4vw; top: 50%; transform: translateY(-52%);
+    font-family: var(--serif); font-size: clamp(18rem, 30vw, 38rem); font-weight: 300;
+    color: transparent; -webkit-text-stroke: 1px rgba(90,15,122,0.18);
+    line-height: 1; pointer-events: none; user-select: none;
+    opacity: 0; animation: fadeUp 1.4s 0.3s ease forwards;
+  }
+
+  .hero-inner {
+    align-self: flex-end;
+    padding-top: 12rem; padding-bottom: 5rem;
+    position: relative; z-index: 2; max-width: 900px;
+  }
+
+  .hero-back {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--white-mid); text-decoration: none;
+    margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 0.8s 0.1s ease forwards;
+    transition: color 0.3s;
+  }
+  .hero-back:hover { color: var(--gold); }
+  .hero-back::before { content: '←'; font-size: 0.85rem; }
+
+  .hero-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--lilac); opacity: 0;
+    animation: fadeUp 0.9s 0.25s ease forwards;
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.8rem;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: rgba(201,168,224,0.4); }
+
+  .hero-inner h1 {
+    font-family: var(--serif); font-size: clamp(3.5rem, 8vw, 8rem);
+    font-weight: 300; line-height: 1; letter-spacing: -0.01em;
+    opacity: 0; animation: fadeUp 1s 0.4s ease forwards;
+  }
+  .hero-inner h1 em { font-style: italic; color: var(--lilac); }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: clamp(0.85rem, 1.5vw, 1.05rem); color: var(--white-mid);
+    font-weight: 300; letter-spacing: 0.06em;
+    opacity: 0; animation: fadeUp 1s 0.55s ease forwards;
+  }
+
+  /* Hero bottom bar */
+  .hero-meta-bar {
+    position: relative; z-index: 2;
+    display: flex; align-items: stretch;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    gap: 0;
+    opacity: 0; animation: fadeUp 0.9s 0.7s ease forwards;
+  }
+  .hero-meta-item {
+    flex: 1; padding: 1.6rem 0;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .hero-meta-item:last-child { border-right: none; padding-right: 0; padding-left: 2rem; }
+  .hero-meta-item:first-child { padding-left: 0; }
+  .hero-meta-item + .hero-meta-item { padding-left: 2rem; }
+  .meta-label { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.28); display: block; margin-bottom: 0.35rem; }
+  .meta-value { font-size: 0.88rem; color: var(--white-high); }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; right: 5vw; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    animation: fadeUp 1s 1.2s ease forwards; opacity: 0;
+  }
+  .scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent); }
+
+  /* ══════════════════════════════════
+     OVERVIEW STRIP
+  ══════════════════════════════════ */
+  #overview {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .overview-left {
+    background: var(--black-2); padding: 6rem 5vw;
+  }
+  .overview-right {
+    background: var(--black-3); padding: 6rem 5vw;
+    position: relative; overflow: hidden;
+  }
+  .overview-right::before {
+    content: ''; position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(90,15,122,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .section-label {
+    font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase;
+    color: var(--gold); display: block; margin-bottom: 1.5rem; opacity: 0.8;
+  }
+  .overview-left p {
+    font-size: 1.05rem; line-height: 1.9; color: var(--white-mid);
+    max-width: 520px;
+  }
+  .overview-left p strong { color: var(--white-high); font-weight: 400; }
+
+  .brand-pillars { display: flex; flex-direction: column; gap: 1.2rem; }
+  .pillar {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.2rem 1.4rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(201,168,224,0.3);
+    transition: border-left-color 0.3s, background 0.3s;
+  }
+  .pillar:hover { border-left-color: var(--lilac); background: var(--lilac-dim); }
+  .pillar-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .pillar-text { font-size: 0.88rem; color: var(--white-mid); line-height: 1.6; }
+  .pillar-text strong { display: block; color: var(--white-high); font-weight: 400; font-size: 0.92rem; margin-bottom: 0.15rem; }
+
+  /* ══════════════════════════════════
+     CHALLENGE
+  ══════════════════════════════════ */
+  #challenge {
+    padding: 8rem 5vw;
+    max-width: 1300px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: start;
+  }
+  .challenge-left { position: sticky; top: 8rem; }
+  .challenge-left h2 {
+    font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-weight: 300; line-height: 1.15;
+  }
+  .challenge-left h2 em { font-style: italic; color: var(--lilac); }
+  .challenge-right p {
+    font-size: 0.97rem; color: var(--white-mid); line-height: 1.95; margin-bottom: 1.5rem;
+  }
+  .challenge-right p:last-child { margin-bottom: 0; }
+  .challenge-list { list-style: none; margin-top: 2.5rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .challenge-list li {
+    display: flex; align-items: flex-start; gap: 1rem;
+    font-size: 0.9rem; color: var(--white-mid); line-height: 1.6;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(201,168,224,0.2);
+    transition: border-left-color 0.3s;
+  }
+  .challenge-list li:hover { border-left-color: var(--lilac); }
+  .challenge-list li::before { content: '◆'; color: var(--lilac); font-size: 0.45rem; flex-shrink: 0; margin-top: 0.45rem; }
+
+  /* ══════════════════════════════════
+     CONCEPT — full bleed
+  ══════════════════════════════════ */
+  #concept {
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    overflow: hidden; position: relative;
+  }
+  .concept-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(90,15,122,0.16) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .concept-inner {
+    max-width: 1300px; margin: 0 auto; padding: 8rem 5vw;
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+  }
+  .concept-text h2 {
+    font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-weight: 300; line-height: 1.15; margin-bottom: 2rem;
+  }
+  .concept-text h2 em { font-style: italic; color: var(--lilac); }
+  .concept-text p { font-size: 0.97rem; color: var(--white-mid); line-height: 1.95; margin-bottom: 1.2rem; }
+  .concept-text p:last-child { margin-bottom: 0; }
+
+  /* Word/meaning callout */
+  .concept-word-card {
+    background: var(--black-3);
+    border: 1px solid rgba(201,168,224,0.12);
+    padding: 3rem 3.5rem; text-align: center; position: relative;
+    overflow: hidden;
+  }
+  .concept-word-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,224,0.06) 0%, transparent 70%);
+  }
+  .word-main {
+    font-family: var(--serif); font-size: clamp(4rem, 8vw, 7rem);
+    font-weight: 300; font-style: italic; color: var(--lilac);
+    line-height: 1; display: block; margin-bottom: 1rem; position: relative;
+  }
+  .word-translation {
+    font-size: 0.68rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); display: block; margin-bottom: 2rem;
+  }
+  .word-divider { width: 40px; height: 1px; background: var(--gold-mid); margin: 0 auto 2rem; }
+  .word-desc {
+    font-size: 0.88rem; color: var(--white-mid); line-height: 1.8; max-width: 280px; margin: 0 auto;
+  }
+
+  .concept-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); margin-top: 2.5rem; }
+  .concept-value { background: var(--black-3); padding: 1.5rem; text-align: center; }
+  .concept-value span { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white-mid); display: block; }
+  .concept-value strong { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; color: var(--lilac); display: block; margin-bottom: 0.3rem; }
+
+  /* ══════════════════════════════════
+     SOLUTION — palette + type
+  ══════════════════════════════════ */
+  #solution {
+    padding: 8rem 5vw;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .solution-header { margin-bottom: 5rem; max-width: 600px; }
+  .solution-header h2 {
+    font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-weight: 300; line-height: 1.15; margin-bottom: 1.2rem;
+  }
+  .solution-header h2 em { font-style: italic; color: var(--lilac); }
+  .solution-header p { font-size: 0.97rem; color: var(--white-mid); line-height: 1.9; }
+
+  /* Palette */
+  .palette-title { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); opacity: 0.75; margin-bottom: 1.5rem; }
+  .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,0.04); margin-bottom: 5rem; }
+  .swatch {
+    aspect-ratio: 1; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 1.2rem;
+  }
+  .swatch-label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.55); display: block; }
+  .swatch-hex { font-family: var(--serif); font-size: 1.1rem; color: rgba(255,255,255,0.8); display: block; }
+
+  /* System submarcas */
+  .system-title { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); opacity: 0.75; margin-bottom: 2rem; }
+  .submarcas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; background: rgba(255,255,255,0.04); }
+  .submarca {
+    background: var(--black-3); padding: 2.5rem 2rem;
+    border-top: 2px solid transparent;
+    transition: border-top-color 0.3s, background 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .submarca::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 180px; height: 180px; border-radius: 50%; opacity: 0.4;
+    transition: opacity 0.4s;
+  }
+  .submarca:hover { background: rgba(90,15,122,0.08); }
+  .submarca:hover::before { opacity: 0.8; }
+
+  .submarca-1 { } .submarca-1::before { background: radial-gradient(circle, rgba(90,15,122,0.3), transparent 70%); }
+  .submarca-1:hover { border-top-color: var(--purple-light); }
+  .submarca-2::before { background: radial-gradient(circle, rgba(201,168,224,0.2), transparent 70%); }
+  .submarca-2:hover { border-top-color: var(--lilac); }
+  .submarca-3::before { background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%); }
+  .submarca-3:hover { border-top-color: var(--gold); }
+
+  .submarca-icon { font-size: 1.5rem; margin-bottom: 1.2rem; display: block; position: relative; }
+  .submarca-name {
+    font-family: var(--serif); font-size: 1.5rem; font-weight: 300;
+    margin-bottom: 0.5rem; display: block; position: relative;
+  }
+  .submarca-role { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white-mid); position: relative; display: block; margin-bottom: 1rem; }
+  .submarca-desc { font-size: 0.82rem; color: rgba(255,255,255,0.38); line-height: 1.7; position: relative; }
+
+  /* ══════════════════════════════════
+     RESULTS
+  ══════════════════════════════════ */
+  #results {
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding: 8rem 5vw;
+    position: relative; overflow: hidden;
+  }
+  .results-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 70% at 50% 50%, rgba(90,15,122,0.14) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .results-inner { max-width: 1300px; margin: 0 auto; position: relative; z-index: 2; }
+  .results-header { text-align: center; margin-bottom: 5rem; }
+  .results-header h2 {
+    font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300; line-height: 1.2;
+  }
+  .results-header h2 em { font-style: italic; color: var(--lilac); }
+  .results-header p { font-size: 0.95rem; color: var(--white-mid); margin-top: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+
+  .results-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: rgba(255,255,255,0.04);
+    margin-bottom: 5rem;
+  }
+  .stat-card { background: var(--black-3); padding: 3rem 2rem; text-align: center; }
+  .stat-val { font-family: var(--serif); font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 300; color: var(--lilac); display: block; line-height: 1; margin-bottom: 0.5rem; }
+  .stat-label { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--white-mid); }
+
+  .results-list { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .result-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.5rem 1.8rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(201,168,224,0.25);
+  }
+  .result-item::before { content: '✦'; color: var(--lilac); font-size: 0.55rem; flex-shrink: 0; margin-top: 0.3rem; }
+  .result-item p { font-size: 0.88rem; color: var(--white-mid); line-height: 1.65; }
+
+  /* ══════════════════════════════════
+     CONCLUSION / QUOTE
+  ══════════════════════════════════ */
+  #conclusion {
+    padding: 10rem 5vw;
+    max-width: 900px; margin: 0 auto; text-align: center;
+  }
+  .quote-mark {
+    font-family: var(--serif); font-size: 6rem; line-height: 0.5;
+    color: var(--purple-light); display: block; margin-bottom: 2rem; opacity: 0.5;
+  }
+  blockquote {
+    font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.6rem);
+    font-weight: 300; font-style: italic; line-height: 1.4;
+    color: var(--white-high); margin-bottom: 2rem;
+  }
+  blockquote em { color: var(--lilac); }
+  .quote-attr { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white-mid); }
+
+  /* ══════════════════════════════════
+     SITE LINK FEATURE
+  ══════════════════════════════════ */
+  #site-link {
+    margin: 0 5vw 6rem;
+    background: var(--black-3);
+    border: 1px solid rgba(201,168,224,0.1);
+    position: relative; overflow: hidden;
+  }
+  .site-link-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(90,15,122,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .site-link-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 3.5rem 4rem; gap: 3rem; flex-wrap: wrap;
+    position: relative; z-index: 2;
+  }
+  .site-link-text {}
+  .site-link-text .label { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--lilac); opacity: 0.8; display: block; margin-bottom: 0.6rem; }
+  .site-link-text h3 { font-family: var(--serif); font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 300; }
+  .site-link-text p { font-size: 0.85rem; color: var(--white-mid); margin-top: 0.5rem; }
+  .site-link-url {
+    font-family: var(--serif); font-size: clamp(1rem, 1.5vw, 1.3rem); font-style: italic;
+    color: var(--lilac); opacity: 0.5; flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════
+     NEXT PROJECT + CTA
+  ══════════════════════════════════ */
+  #next-cta {
+    padding: 10rem 5vw;
+    text-align: center; position: relative; overflow: hidden;
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .next-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(90,15,122,0.2) 0%, transparent 70%);
+  }
+  .next-border { position: absolute; inset: 3rem 5vw; border: 1px solid rgba(212,175,55,0.06); pointer-events: none; }
+  .next-inner { position: relative; z-index: 2; max-width: 620px; margin: 0 auto; }
+  .next-label { font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--gold); opacity: 0.8; display: block; margin-bottom: 1.5rem; }
+  .next-inner h2 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; }
+  .next-inner h2 em { font-style: italic; color: var(--gold); }
+  .next-inner p { color: var(--white-mid); font-size: 0.97rem; line-height: 1.8; max-width: 440px; margin: 0 auto 2.5rem; }
+  .next-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer { padding: 4rem 5vw 2.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: var(--serif); font-size: 1.2rem; font-weight: 300; letter-spacing: 0.38em; color: var(--white); text-decoration: none; }
+  .footer-logo span { color: var(--gold); }
+  .footer-copy { font-size: 0.7rem; color: rgba(255,255,255,0.22); }
+  .footer-social { display: flex; gap: 0.8rem; }
+  .footer-social-link { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--white-mid); font-size: 0.7rem; transition: border-color 0.3s, color 0.3s; }
+  .footer-social-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    #overview { grid-template-columns: 1fr; }
+    #challenge { grid-template-columns: 1fr; gap: 3rem; }
+    .challenge-left { position: static; }
+    .concept-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .results-stats { grid-template-columns: repeat(2, 1fr); }
+    .submarcas { grid-template-columns: 1fr; }
+    .palette { grid-template-columns: repeat(2, 1fr); }
+    .results-list { grid-template-columns: 1fr; }
+    .site-link-inner { flex-direction: column; gap: 2rem; }
+    nav .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-links.active { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,10,10,0.97); backdrop-filter: blur(24px); padding: 2rem 5vw; gap: 1.5rem; border-bottom: 1px solid rgba(212,175,55,0.1); }
+  }
+  @media (max-width: 600px) {
+    .results-stats { grid-template-columns: 1fr 1fr; }
+    .concept-values { grid-template-columns: 1fr; }
+    .hero-meta-bar { flex-wrap: wrap; }
+    .hero-meta-item { min-width: 50%; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo"><span>L</span>UMINA</a>
+  <button class="nav-toggle" id="navToggle">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="sobre.html">Estúdio</a></li>
+    <li><a href="servicos.html">Serviços</a></li>
+    <li><a href="case-studies.html" class="active">Case Studies</a></li>
+    <li><a href="servicos.html#precos">Investimento</a></li>
+    <li><a href="contacto.html" class="nav-cta">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-canvas"></div>
+  <span class="hero-letter" aria-hidden="true">M</span>
+
+  <div class="hero-inner">
+    <a href="case-studies.html" class="hero-back">Case Studies</a>
+    <span class="hero-eyebrow">Identidade Visual &amp; Sistema de Marca</span>
+    <h1>Muhatu<br><em>Enterprise</em></h1>
+    <p class="hero-subtitle">Uma marca construída com intenção — do nome à identidade, do conceito à estratégia.</p>
+  </div>
+
+  <div class="hero-meta-bar">
+    <div class="hero-meta-item">
+      <span class="meta-label">Cliente</span>
+      <span class="meta-value">Muhatu Enterprise</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Tipo</span>
+      <span class="meta-value">Identidade Visual · Sistema de Marca</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Âmbito</span>
+      <span class="meta-value">Consultoria · Tech · Jurídico · Social</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Origem</span>
+      <span class="meta-value">Luanda, Angola</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ═══ OVERVIEW ═══ -->
+<section id="overview">
+  <div class="overview-left reveal">
+    <span class="section-label">Visão Geral</span>
+    <p>
+      A <strong>Muhatu Enterprise</strong> é uma empresa angolana fundada por duas mulheres, com o propósito de oferecer soluções integradas em consultoria, tecnologia, jurídico e impacto social.
+    </p>
+    <p style="margin-top:1.2rem;">
+      Mais do que uma empresa, a Muhatu posiciona-se como um <strong>hub multifacetado de inovação e empoderamento</strong>, conectando negócios à transformação digital e social com foco na realidade angolana.
+    </p>
+  </div>
+  <div class="overview-right reveal reveal-delay-2">
+    <span class="section-label">Pilares da Marca</span>
+    <div class="brand-pillars">
+      <div class="pillar">
+        <span class="pillar-icon">◈</span>
+        <div class="pillar-text"><strong>Liderança Feminina</strong>Fundada e liderada por mulheres — essa essência está no ADN visual.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">◈</span>
+        <div class="pillar-text"><strong>Inovação com Propósito</strong>Tecnologia e impacto social como complementos, não opostos.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">◈</span>
+        <div class="pillar-text"><strong>Raízes Angolanas</strong>Uma marca pensada para a realidade local, com ambição global.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">◈</span>
+        <div class="pillar-text"><strong>Escalabilidade</strong>Um sistema visual que cresce com a empresa, área a área.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHALLENGE ═══ -->
+<section id="challenge">
+  <div class="challenge-left reveal">
+    <span class="section-label">O Desafio</span>
+    <h2>Representar o múltiplo<br><em>sem perder o foco.</em></h2>
+  </div>
+  <div class="challenge-right reveal reveal-delay-1">
+    <p>O principal desafio foi criar uma identidade visual capaz de representar múltiplas áreas de actuação sem perder clareza, consistência e sofisticação.</p>
+    <p>Era necessário construir algo que não fosse apenas bonito — mas <strong style="color:var(--white-high);font-weight:400;">estratégico e escalável.</strong></p>
+    <ul class="challenge-list">
+      <li>Comunicar credibilidade e estrutura institucional</li>
+      <li>Representar inovação e modernidade tecnológica</li>
+      <li>Adaptar-se a áreas distintas — tecnologia, jurídico, social</li>
+      <li>Reflectir a realidade e o posicionamento angolano</li>
+      <li>Criar presença forte tanto institucional quanto digital</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ CONCEPT ═══ -->
+<section id="concept">
+  <div class="concept-glow"></div>
+  <div class="concept-inner">
+    <div class="concept-text reveal">
+      <span class="section-label">O Conceito</span>
+      <h2>A base nasce<br>do <em>próprio nome.</em></h2>
+      <p>A identidade tem origem no significado da palavra que a funda. "Muhatu" não é apenas um nome — é uma declaração. E foi esse o ponto de partida para toda a construção visual.</p>
+      <p>A marca foi pensada para traduzir liderança feminina com a mesma força e elegância que o nome carrega: estrutura com sensibilidade, poder com propósito, impacto com intenção.</p>
+      <div class="concept-values">
+        <div class="concept-value">
+          <strong>Liderança</strong><span>Feminina</span>
+        </div>
+        <div class="concept-value">
+          <strong>Força</strong><span>com Elegância</span>
+        </div>
+        <div class="concept-value">
+          <strong>Estrutura</strong><span>com Sensibilidade</span>
+        </div>
+        <div class="concept-value">
+          <strong>Impacto</strong><span>com Propósito</span>
+        </div>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="concept-word-card">
+        <span class="word-main">Muhatu</span>
+        <span class="word-translation">Língua Umbundu · Angola</span>
+        <div class="word-divider"></div>
+        <p class="word-desc">
+          <em style="color:var(--lilac);font-family:var(--serif);font-size:1.15rem;">"Mulher"</em><br><br>
+          Uma palavra. Um propósito. Uma empresa.<br>
+          A essência da marca começa no nome que a define.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOLUTION ═══ -->
+<section id="solution">
+  <div class="solution-header reveal">
+    <span class="section-label">A Solução</span>
+    <h2>Equilíbrio entre<br>autoridade e <em>humanidade.</em></h2>
+    <p>A identidade visual foi construída sobre um princípio central: transitar com naturalidade entre o institucional e o humano, entre o rigoroso e o empático.</p>
+  </div>
+
+  <!-- Palette -->
+  <div class="reveal">
+    <p class="palette-title">Paleta de Cores</p>
+    <div class="palette">
+      <div class="swatch" style="background:#3D0A55;">
+        <span class="swatch-label">Roxo Profundo</span>
+        <span class="swatch-hex">#3D0A55</span>
+      </div>
+      <div class="swatch" style="background:#7B2FA0;">
+        <span class="swatch-label">Roxo Médio</span>
+        <span class="swatch-hex">#7B2FA0</span>
+      </div>
+      <div class="swatch" style="background:#C9A8E0;">
+        <span class="swatch-label" style="color:rgba(0,0,0,0.55);">Lilás Suave</span>
+        <span class="swatch-hex" style="color:rgba(0,0,0,0.6);">#C9A8E0</span>
+      </div>
+      <div class="swatch" style="background:#1A1A1A;">
+        <span class="swatch-label">Tom Escuro</span>
+        <span class="swatch-hex">#1A1A1A</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submarcas -->
+  <div class="reveal reveal-delay-1">
+    <p class="system-title">Sistema de Submarcas</p>
+    <div class="submarcas">
+      <div class="submarca submarca-1">
+        <span class="submarca-icon">⚖</span>
+        <span class="submarca-name">Muhatu <em style="font-style:italic;color:var(--purple-soft);">Legal</em></span>
+        <span class="submarca-role">Serviços Jurídicos</span>
+        <span class="submarca-desc">Identidade que comunica autoridade, rigor e confiança no âmbito legal e consultivo.</span>
+      </div>
+      <div class="submarca submarca-2">
+        <span class="submarca-icon">◉</span>
+        <span class="submarca-name">Muhatu <em style="font-style:italic;color:var(--lilac);">Tech</em></span>
+        <span class="submarca-role">Tecnologia & Inovação</span>
+        <span class="submarca-desc">Linguagem visual moderna e dinâmica para soluções digitais e transformação tecnológica.</span>
+      </div>
+      <div class="submarca submarca-3">
+        <span class="submarca-icon">✦</span>
+        <span class="submarca-name">Muhatu <em style="font-style:italic;color:var(--gold);">Social</em></span>
+        <span class="submarca-role">Impacto Social</span>
+        <span class="submarca-desc">Tom mais humano e próximo, reflectindo o compromisso com o empoderamento e a comunidade.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RESULTS ═══ -->
+<section id="results">
+  <div class="results-glow"></div>
+  <div class="results-inner">
+    <div class="results-header reveal">
+      <span class="section-label" style="display:block;margin-bottom:1rem;">Resultado</span>
+      <h2>Uma identidade <em>sólida</em><br>e preparada para crescer.</h2>
+      <p>A Muhatu ganhou mais do que uma imagem — ganhou uma ferramenta estratégica de comunicação e posicionamento.</p>
+    </div>
+    <div class="results-stats reveal reveal-delay-1">
+      <div class="stat-card">
+        <span class="stat-val">3</span>
+        <span class="stat-label">Submarcas desenvolvidas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">1</span>
+        <span class="stat-label">Sistema visual coeso</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">∞</span>
+        <span class="stat-label">Escalabilidade</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">✦</span>
+        <span class="stat-label">Identidade com intenção</span>
+      </div>
+    </div>
+    <div class="results-list reveal reveal-delay-2">
+      <div class="result-item"><p>Comunicação clara e profissional em todos os pontos de contacto</p></div>
+      <div class="result-item"><p>Presença digital consistente e reconhecível</p></div>
+      <div class="result-item"><p>Estrutura visual adaptável a diferentes contextos e áreas</p></div>
+      <div class="result-item"><p>Base sólida para expansão e reconhecimento de marca a longo prazo</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SITE LINK ═══ -->
+<div id="site-link" class="reveal">
+  <div class="site-link-glow"></div>
+  <div class="site-link-inner">
+    <div class="site-link-text">
+      <span class="label">Website Desenvolvido pela LUMINA</span>
+      <h3>Visita o site da Muhatu Enterprise</h3>
+      <p>A identidade também vive no digital — explora o resultado final online.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1rem;">
+      <span class="site-link-url">muhatu.ao</span>
+      <a href="https://muhatu.ao" target="_blank" rel="noopener" class="btn-site">
+        Visitar o site <span class="arrow">↗</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONCLUSION / QUOTE ═══ -->
+<section id="conclusion">
+  <div class="reveal">
+    <span class="quote-mark" aria-hidden="true">"</span>
+    <blockquote>A Muhatu não foi apenas desenhada<br>— foi <em>construída com intenção.</em></blockquote>
+    <p class="quote-attr">Cada elemento visual reflecte o propósito da empresa:<br>impactar, estruturar e transformar.</p>
+  </div>
+</section>
+
+<!-- ═══ NEXT + CTA ═══ -->
+<section id="next-cta">
+  <div class="next-glow"></div>
+  <div class="next-border"></div>
+  <div class="next-inner reveal">
+    <span class="next-label">O próximo projecto</span>
+    <h2>Tens um projecto que precisa de identidade à altura<br>do que <em>representa?</em></h2>
+    <p>Vamos criar algo com intenção.</p>
+    <div class="next-btns">
+      <a href="https://wa.me/244956263644" class="btn-primary" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@lumina.ao" class="btn-outline">hello@lumina.ao</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom">
+    <a href="index.html" class="footer-logo"><span>L</span>UMINA</a>
+    <span class="footer-copy">© 2026 LUMINA by Lia · Luanda, Angola</span>
+    <div class="footer-social">
+      <a href="#" class="footer-social-link" title="Instagram">IG</a>
+      <a href="https://wa.me/244956263644" class="footer-social-link" title="WhatsApp">WA</a>
+      <a href="mailto:hello@lumina.ao" class="footer-social-link" title="Email">@</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Cursor */
+  const cur = document.getElementById('cursor'), ring = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function anim(){rx+=(mx-rx)*0.13;ry+=(my-ry)*0.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button,.pillar,.submarca,.result-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+  });
+  if('ontouchstart' in window){cur.style.display='none';ring.style.display='none';document.body.style.cursor='auto';}
+
+  /* Scroll progress */
+  window.addEventListener('scroll',()=>{
+    const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+    document.getElementById('scroll-progress').style.width=(p*100)+'%';
+    document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
+  },{passive:true});
+
+  /* Mobile nav */
+  document.getElementById('navToggle').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('active'));
+  document.getElementById('navLinks').querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('active')));
+
+  /* Reveal */
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

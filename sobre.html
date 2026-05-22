@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sobre — LUMINA by Lia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #5A0F7A;
+    --purple-light: #7B2FA0;
+    --purple-glow: rgba(90,15,122,0.4);
+    --purple-glow-strong: rgba(90,15,122,0.65);
+    --black: #0A0A0A;
+    --black-2: #111111;
+    --black-3: #171717;
+    --black-4: #1e1e1e;
+    --white: #FFFFFF;
+    --white-dim: rgba(255,255,255,0.06);
+    --white-mid: rgba(255,255,255,0.52);
+    --white-high: rgba(255,255,255,0.88);
+    --gold: #D4AF37;
+    --gold-dim: rgba(212,175,55,0.12);
+    --gold-light: #E8CC6A;
+    --gold-mid: rgba(212,175,55,0.35);
+    --gold-glow: rgba(212,175,55,0.22);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Outfit', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── SCROLL PROGRESS ── */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0;
+    height: 2px; width: 0%;
+    background: linear-gradient(to right, var(--purple), var(--gold));
+    z-index: 9999; transition: width 0.1s linear;
+  }
+
+  /* ── CURSOR ── */
+  #cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: width 0.25s, height 0.25s, opacity 0.3s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--gold-mid); border-radius: 50%;
+    pointer-events: none; z-index: 9997;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s;
+  }
+  body.cursor-hover #cursor { width: 16px; height: 16px; }
+  body.cursor-hover #cursor-ring { width: 56px; height: 56px; border-color: var(--gold); }
+
+  /* ── GRAIN ── */
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.028; pointer-events: none; z-index: 1000;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 2rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.9); backdrop-filter: blur(24px);
+    padding: 1.1rem 5vw; border-bottom-color: rgba(212,175,55,0.08);
+  }
+  .nav-logo {
+    font-family: var(--serif); font-size: 1.55rem; font-weight: 300;
+    letter-spacing: 0.38em; color: var(--white); text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--white-mid); text-decoration: none; transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px; background: var(--gold); transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--white); }
+  .nav-links a.active::after { width: 100%; background: var(--gold); }
+  .nav-cta {
+    padding: 0.55rem 1.4rem; border: 1px solid rgba(212,175,55,0.35);
+    color: var(--gold) !important; font-size: 0.72rem !important;
+    letter-spacing: 0.2em !important;
+    transition: background 0.3s, border-color 0.3s !important;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--gold-dim); border-color: var(--gold) !important; }
+  .nav-toggle {
+    display: none; background: none; border: none;
+    color: var(--white); font-size: 1.4rem; cursor: none; padding: 0.25rem;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.38em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; opacity: 0.8;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    padding: 0.95rem 2.4rem; background: var(--purple); color: var(--white);
+    border: 1px solid transparent; font-family: var(--sans); font-size: 0.76rem;
+    font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; cursor: none; display: inline-block;
+    position: relative; overflow: hidden;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-primary::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  }
+  .btn-primary:hover {
+    background: var(--purple-light);
+    box-shadow: 0 0 36px 8px var(--purple-glow-strong), 0 0 70px var(--purple-glow);
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    padding: 0.95rem 2.4rem; background: transparent; color: var(--white);
+    border: 1px solid rgba(255,255,255,0.2); font-family: var(--sans);
+    font-size: 0.76rem; font-weight: 400; letter-spacing: 0.2em;
+    text-transform: uppercase; text-decoration: none; cursor: none;
+    display: inline-block;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background 0.3s;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); background: var(--gold-dim); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  .reveal {
+    opacity: 0; transform: translateY(38px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.22s; }
+  .reveal-delay-3 { transition-delay: 0.34s; }
+  .reveal-delay-4 { transition-delay: 0.46s; }
+
+  /* ═══════════════════════════════════
+     PAGE HERO
+  ═══════════════════════════════════ */
+  #page-hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Left — photo side */
+  .hero-photo-side {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-photo-placeholder {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #1a0527 0%, #0f0f0f 55%, #12091a 100%);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    padding: 3rem;
+  }
+  /* When user adds photo, replace .hero-photo-placeholder bg with real image */
+  .hero-photo-img {
+    position: absolute; inset: 0;
+    object-fit: cover; width: 100%; height: 100%;
+    filter: grayscale(15%) contrast(1.05);
+  }
+  .photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, transparent 60%, var(--black) 100%),
+                linear-gradient(to top, rgba(10,10,10,0.5) 0%, transparent 40%);
+  }
+  /* Decorative corner frame */
+  .photo-frame {
+    position: absolute;
+    top: 5rem; left: 4rem; right: 0; bottom: 4rem;
+    border-left: 1px solid rgba(212,175,55,0.12);
+    border-top: 1px solid rgba(212,175,55,0.12);
+    pointer-events: none;
+  }
+  .photo-frame::after {
+    content: '';
+    position: absolute; bottom: -1px; right: 0;
+    width: 40%; height: 1px;
+    background: linear-gradient(to left, transparent, rgba(212,175,55,0.12));
+  }
+  .photo-name-tag {
+    position: absolute; bottom: 3rem; left: 3rem;
+    z-index: 2;
+    opacity: 0; animation: fadeUp 1s 0.8s ease forwards;
+  }
+  .photo-name-tag .name {
+    font-family: var(--serif); font-size: 1rem; font-weight: 300;
+    letter-spacing: 0.25em; color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+  }
+  .photo-name-tag .role {
+    font-size: 0.62rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.7; margin-top: 0.3rem; display: block;
+  }
+
+  /* Decorative large L behind photo */
+  .bg-letter {
+    position: absolute; bottom: -2rem; left: -1rem;
+    font-family: var(--serif); font-size: 28rem; font-weight: 300;
+    color: transparent; -webkit-text-stroke: 1px rgba(212,175,55,0.06);
+    line-height: 1; user-select: none; pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Right — text side */
+  .hero-text-side {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 10rem 6vw 6rem 4vw;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.8; margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.8rem;
+    opacity: 0; animation: fadeUp 1s 0.2s ease forwards;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 28px; height: 1px;
+    background: var(--gold-mid);
+  }
+  .hero-text-side h1 {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 300; line-height: 1.1;
+    margin-bottom: 2.5rem;
+    opacity: 0; animation: fadeUp 1s 0.4s ease forwards;
+  }
+  .hero-text-side h1 em { font-style: italic; color: var(--gold); }
+  .hero-intro-text {
+    font-size: 1.05rem; color: var(--white-mid); line-height: 1.85;
+    max-width: 460px; margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 1s 0.6s ease forwards;
+  }
+  .hero-intro-text strong { color: rgba(255,255,255,0.75); font-weight: 400; }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 1s 0.8s ease forwards;
+  }
+
+  /* Orb background */
+  .hero-orb {
+    position: absolute; border-radius: 50%; filter: blur(100px);
+    pointer-events: none;
+  }
+  .orb-1 {
+    width: 500px; height: 500px; top: -100px; right: -100px;
+    background: radial-gradient(circle, rgba(90,15,122,0.22) 0%, transparent 70%);
+    animation: orbFloat 12s ease-in-out infinite alternate;
+  }
+  .orb-2 {
+    width: 300px; height: 300px; bottom: 5%; left: 40%;
+    background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%);
+    animation: orbFloat 16s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes orbFloat { 0%{transform:translateY(0)} 100%{transform:translateY(-30px)} }
+
+  /* ═══════════════════════════════════
+     STORY SECTION
+  ═══════════════════════════════════ */
+  #story {
+    padding: 10rem 5vw;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 2fr; gap: 8vw;
+    align-items: start;
+  }
+  .story-left { position: sticky; top: 8rem; }
+  .story-left .big-num {
+    font-family: var(--serif); font-size: 8rem; font-weight: 300;
+    color: transparent; -webkit-text-stroke: 1px rgba(212,175,55,0.12);
+    line-height: 1; display: block; margin-bottom: 1.5rem;
+  }
+  .story-left p {
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.25); line-height: 1.8;
+  }
+  .story-right { display: flex; flex-direction: column; gap: 5rem; }
+  .story-block h2 {
+    font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 300; line-height: 1.25; margin-bottom: 1.6rem;
+  }
+  .story-block h2 em { font-style: italic; color: var(--gold); }
+  .story-block p {
+    color: var(--white-mid); font-size: 1rem; line-height: 1.9;
+    margin-bottom: 1.2rem;
+  }
+  .story-block p:last-child { margin-bottom: 0; }
+  .story-block p strong { color: rgba(255,255,255,0.8); font-weight: 400; }
+  .story-divider {
+    width: 40px; height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    margin: 2rem 0; opacity: 0.4;
+  }
+
+  /* ═══════════════════════════════════
+     ABORDAGEM / VALORES
+  ═══════════════════════════════════ */
+  #abordagem {
+    padding: 10rem 5vw;
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .abordagem-inner { max-width: 1200px; margin: 0 auto; }
+  .abordagem-header { margin-bottom: 5rem; }
+  .abordagem-header h2 {
+    font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300; margin-top: 0.4rem;
+  }
+  .abordagem-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5px; }
+  .abordagem-card {
+    background: var(--black-3); padding: 3rem 2.5rem;
+    position: relative; overflow: hidden;
+    transition: background 0.4s;
+  }
+  .abordagem-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(212,175,55,0.25), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .abordagem-card:hover { background: var(--black-4); }
+  .abordagem-card:hover::after { opacity: 1; }
+  .abordagem-num {
+    font-family: var(--serif); font-size: 5rem; font-weight: 300;
+    color: transparent; -webkit-text-stroke: 1px rgba(212,175,55,0.18);
+    line-height: 1; display: block; margin-bottom: 1.5rem;
+    transition: -webkit-text-stroke-color 0.4s;
+  }
+  .abordagem-card:hover .abordagem-num { -webkit-text-stroke-color: rgba(212,175,55,0.45); }
+  .abordagem-card h3 {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 300;
+    margin-bottom: 1rem; transition: color 0.3s;
+  }
+  .abordagem-card:hover h3 { color: var(--white-high); }
+  .abordagem-card p { color: var(--white-mid); font-size: 0.92rem; line-height: 1.8; }
+
+  /* ═══════════════════════════════════
+     VISÃO
+  ═══════════════════════════════════ */
+  #visao {
+    padding: 10rem 5vw;
+    max-width: 1000px; margin: 0 auto;
+    text-align: center;
+  }
+  .visao-quote {
+    font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300; line-height: 1.4; color: rgba(255,255,255,0.82);
+    margin-bottom: 3rem; position: relative;
+  }
+  .visao-quote::before {
+    content: '"'; font-size: 6rem; color: rgba(212,175,55,0.1);
+    position: absolute; top: -2rem; left: 50%; transform: translateX(-50%);
+    font-family: var(--serif); line-height: 1;
+  }
+  .visao-quote em { color: var(--gold); font-style: italic; }
+  .visao-author {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+  .visao-divider {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(212,175,55,0.3), transparent);
+    margin: 0 auto 3rem;
+  }
+
+  /* ═══════════════════════════════════
+     NÚMEROS PESSOAIS
+  ═══════════════════════════════════ */
+  #numeros {
+    padding: 0 5vw 10rem;
+  }
+  .numeros-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1px; background: rgba(255,255,255,0.04);
+  }
+  .numero-item {
+    background: var(--black); padding: 3rem 2rem; text-align: center;
+    position: relative; overflow: hidden; transition: background 0.3s;
+  }
+  .numero-item::before {
+    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 1px; background: var(--gold); transition: width 0.5s;
+  }
+  .numero-item:hover { background: var(--black-2); }
+  .numero-item:hover::before { width: 80%; }
+  .numero-val {
+    font-family: var(--serif); font-size: 3rem; font-weight: 300;
+    color: var(--gold); line-height: 1; display: block; margin-bottom: 0.6rem;
+  }
+  .numero-label {
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--white-mid);
+  }
+
+  /* ═══════════════════════════════════
+     CTA FINAL
+  ═══════════════════════════════════ */
+  #cta-sobre {
+    padding: 10rem 5vw;
+    text-align: center; position: relative; overflow: hidden;
+    background: var(--black-2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .cta-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(90,15,122,0.22) 0%, transparent 70%);
+  }
+  .cta-border {
+    position: absolute; inset: 3rem 5vw;
+    border: 1px solid rgba(212,175,55,0.06); pointer-events: none;
+    transition: border-color 0.5s;
+  }
+  #cta-sobre:hover .cta-border { border-color: rgba(212,175,55,0.13); }
+  .cta-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+  .cta-inner h2 {
+    font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem;
+  }
+  .cta-inner h2 em { font-style: italic; color: var(--gold); }
+  .cta-inner p {
+    color: var(--white-mid); font-size: 0.97rem; line-height: 1.8;
+    max-width: 440px; margin: 0 auto 2.5rem;
+  }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ═══════════════════════════════════
+     FOOTER
+  ═══════════════════════════════════ */
+  footer {
+    padding: 4rem 5vw 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-bottom {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { font-family: var(--serif); font-size: 1.2rem; font-weight: 300; letter-spacing: 0.38em; color: var(--white); text-decoration: none; }
+  .footer-logo span { color: var(--gold); }
+  .footer-copy { font-size: 0.7rem; color: rgba(255,255,255,0.22); }
+  .footer-social { display: flex; gap: 0.8rem; }
+  .footer-social-link {
+    width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    text-decoration: none; color: var(--white-mid); font-size: 0.7rem;
+    transition: border-color 0.3s, color 0.3s, background 0.3s;
+  }
+  .footer-social-link:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  /* ═══════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════ */
+  @media (max-width: 900px) {
+    #page-hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-photo-side { height: 60vw; min-height: 320px; }
+    .hero-text-side { padding: 4rem 5vw; }
+    .hero-text-side h1 { font-size: 2.8rem; }
+    #story { grid-template-columns: 1fr; gap: 3rem; padding: 6rem 5vw; }
+    .story-left { position: static; display: flex; align-items: center; gap: 1.5rem; }
+    .story-left .big-num { font-size: 5rem; margin-bottom: 0; }
+    .abordagem-grid { grid-template-columns: 1fr; }
+    .numeros-inner { grid-template-columns: 1fr 1fr; }
+    nav .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-links.active {
+      display: flex; flex-direction: column;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: rgba(10,10,10,0.97); backdrop-filter: blur(24px);
+      padding: 2rem 5vw; gap: 1.5rem;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+    }
+  }
+  @media (max-width: 600px) {
+    .numeros-inner { grid-template-columns: 1fr 1fr; }
+    .abordagem-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo"><span>L</span>UMINA</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="sobre.html" class="active">Estúdio</a></li>
+    <li><a href="servicos.html">Serviços</a></li>
+    <li><a href="case-studies.html">Case Studies</a></li>
+    <li><a href="servicos.html#precos">Investimento</a></li>
+    <li><a href="contacto.html" class="nav-cta">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<section id="page-hero">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+
+  <!-- FOTO -->
+  <div class="hero-photo-side">
+    <img src="foto-lia.jpg" alt="Lia — LUMINA" class="hero-photo-img">
+    <div class="photo-overlay"></div>
+    <div class="photo-frame"></div>
+    <div class="bg-letter">L</div>
+    <div class="photo-name-tag">
+      <span class="name">Lia</span>
+      <span class="role">Fundadora · Designer · LUMINA</span>
+    </div>
+  </div>
+
+  <!-- TEXTO -->
+  <div class="hero-text-side">
+    <span class="hero-eyebrow">Sobre a Lia</span>
+    <h1>
+      Por trás de cada<br>
+      projecto, <em>há uma<br>
+      pessoa real.</em>
+    </h1>
+    <p class="hero-intro-text">
+      Sou a Lia — designer, fundadora da LUMINA e alguém que acredita que o design vai muito além do estético. <strong>É sobre o que as pessoas sentem</strong> quando veem o teu trabalho pela primeira vez.
+    </p>
+    <div class="hero-btns">
+      <a href="#story" class="btn-primary">Ler a minha história</a>
+      <a href="contacto.html" class="btn-outline">Falar comigo</a>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story-left reveal">
+    <span class="big-num">01</span>
+    <p>A história<br>por trás<br>da marca</p>
+  </div>
+  <div class="story-right">
+
+    <div class="story-block reveal">
+      <h2>Comecei a <em>sentir</em><br>antes de começar a criar.</h2>
+      <p>Sempre fui a pessoa que reparava nos detalhes que os outros não viam — a fonte errada num menu, o espaçamento que tirava elegância a uma embalagem, a cor que mudava completamente o tom de uma mensagem.</p>
+      <p>Cresci em Luanda com os olhos abertos para a estética de tudo — moda, arquitectura, embalagens, convites de festas. Sempre achei que Angola merecia design à altura da sua cultura e das suas pessoas.</p>
+      <div class="story-divider"></div>
+    </div>
+
+    <div class="story-block reveal">
+      <h2>A LUMINA nasceu<br>de uma <em>necessidade real.</em></h2>
+      <p>Quando comecei a perceber que eventos incríveis chegavam aos convidados com convites que não os representavam, decidi mudar isso. A LUMINA surgiu como resposta a uma lacuna que eu via constantemente: <strong>marcas e eventos angolanos sem design à altura do que representam.</strong></p>
+      <p>O nome LUMINA vem de luz — de iluminar o trabalho das pessoas, de dar brilho ao que elas constroem. E o <strong>L dourado</strong> é a minha assinatura dentro disso tudo.</p>
+      <div class="story-divider"></div>
+    </div>
+
+    <div class="story-block reveal">
+      <h2>O que me move<br>todos os dias.</h2>
+      <p>Não trabalho só com ferramentas de design. Trabalho com histórias, com emoções, com a sensação que queres que o teu cliente tenha quando abre o teu convite às 22h no telemóvel.</p>
+      <p>Cada projecto começa com escuta — genuína. Porque <strong>não há dois clientes iguais</strong>, e não há duas soluções iguais. A minha abordagem é ao mesmo tempo intuitiva, estratégica e colaborativa — porque acredito que o melhor resultado nasce quando o cliente faz parte do processo.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABORDAGEM -->
+<section id="abordagem">
+  <div class="abordagem-inner">
+    <div class="abordagem-header reveal">
+      <span class="section-label">Como trabalho</span>
+      <h2>A minha abordagem</h2>
+    </div>
+    <div class="abordagem-grid">
+      <div class="abordagem-card reveal reveal-delay-1">
+        <span class="abordagem-num">01</span>
+        <h3>Intuitiva & Emocional</h3>
+        <p>Sinto o projecto antes de o desenhar. Há uma leitura emocional que faço antes de abrir qualquer ferramenta — e é ela que guia as decisões mais importantes de cada trabalho.</p>
+      </div>
+      <div class="abordagem-card reveal reveal-delay-2">
+        <span class="abordagem-num">02</span>
+        <h3>Estratégica & Detalhista</h3>
+        <p>Cada decisão tem um porquê. A cor, a tipografia, o espaço em branco — nada é acidente. Design sem intenção é decoração. Design com intenção é comunicação.</p>
+      </div>
+      <div class="abordagem-card reveal reveal-delay-3">
+        <span class="abordagem-num">03</span>
+        <h3>Colaborativa & Humana</h3>
+        <p>O cliente não é apenas quem paga — é parte do processo. O melhor resultado nasce quando há confiança, conversas abertas e espaço para a história de quem está do outro lado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISÃO -->
+<section id="visao">
+  <div class="visao-divider reveal"></div>
+  <blockquote class="visao-quote reveal">
+    Angola merece design que a <em>represente de verdade</em> — sofisticado, autêntico e feito com intenção.
+  </blockquote>
+  <p class="visao-author reveal">— Lia, Fundadora da LUMINA</p>
+</section>
+
+<!-- NÚMEROS -->
+<section id="numeros">
+  <div class="numeros-inner">
+    <div class="numero-item reveal">
+      <span class="numero-val" data-target="15" data-suffix="+">0+</span>
+      <span class="numero-label">Projectos entregues</span>
+    </div>
+    <div class="numero-item reveal reveal-delay-1">
+      <span class="numero-val" data-target="25" data-suffix="+">0+</span>
+      <span class="numero-label">Clientes satisfeitos</span>
+    </div>
+    <div class="numero-item reveal reveal-delay-2">
+      <span class="numero-val" data-target="3" data-suffix="+">0+</span>
+      <span class="numero-label">Anos de experiência</span>
+    </div>
+    <div class="numero-item reveal reveal-delay-3">
+      <span class="numero-val" data-target="100" data-suffix="%">0%</span>
+      <span class="numero-label">Satisfação garantida</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta-sobre">
+  <div class="cta-bg"></div>
+  <div class="cta-border"></div>
+  <div class="cta-inner reveal">
+    <span class="section-label">Próximo passo</span>
+    <h2>Vamos criar<br>algo <em>juntos?</em></h2>
+    <p>Conta-me o teu projecto. Uma mensagem é o suficiente para começar algo extraordinário.</p>
+    <div class="cta-btns">
+      <a href="https://wa.me/244956263644" class="btn-primary" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@lumina.ao" class="btn-outline">hello@lumina.ao</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom">
+    <a href="index.html" class="footer-logo"><span>L</span>UMINA</a>
+    <span class="footer-copy">© 2026 LUMINA by Lia · Luanda, Angola</span>
+    <div class="footer-social">
+      <a href="#" class="footer-social-link" title="Instagram">IG</a>
+      <a href="https://wa.me/244956263644" class="footer-social-link" title="WhatsApp">WA</a>
+      <a href="mailto:hello@lumina.ao" class="footer-social-link" title="Email">@</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Cursor ── */
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
+  (function animRing() {
+    rx += (mx - rx) * 0.13; ry += (my - ry) * 0.13;
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a, button, .abordagem-card').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+  if ('ontouchstart' in window) { cur.style.display='none'; ring.style.display='none'; document.body.style.cursor='auto'; }
+
+  /* ── Scroll Progress ── */
+  window.addEventListener('scroll', () => {
+    const p = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    document.getElementById('scroll-progress').style.width = (p * 100) + '%';
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  /* ── Mobile Nav ── */
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('active');
+  });
+  document.getElementById('navLinks').querySelectorAll('a').forEach(l =>
+    l.addEventListener('click', () => document.getElementById('navLinks').classList.remove('active'))
+  );
+
+  /* ── Smooth Scroll ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const t = document.querySelector(this.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  /* ── Scroll Reveal ── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  /* ── Counter ── */
+  const cObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '+';
+      let start = 0;
+      const step = ts => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / 1800, 1);
+        el.textContent = Math.round((1 - Math.pow(1 - progress, 3)) * target) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      cObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.numero-val[data-target]').forEach(el => cObs.observe(el));
+</script>
+</body>
+</html>
